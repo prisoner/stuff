@@ -99,25 +99,18 @@ import语句可分为以下几组，按照这个顺序，每组由一个空行�
 
 ==== 只有一个顶级类声明
 
-每个顶级类都在一个与它同名的源文件中(当然，还包含.java后缀)。
-
-TIP: package-info.java，该文件中可没有package-info类。
+每个顶级类都在一个与它同名的源文件中。
 
 ==== 类成员顺序
 
-类的成员顺序对易学性有很大的影响，但这也不存在唯一的通用法则。不同的类对成员的排序可能是不同的。
-
-最重要的一点，每个类应该以**某种逻辑**去排序它的成员，维护者应该要能解释这种排序逻辑。
+类的成员顺序对易用性有很大的影响，每个类应该以**某种逻辑**去排序它的成员，维护者应该要能解释这种排序逻辑。
 比如，新的方法不能总是习惯性地添加到类的结尾，因为这样就是按时间顺序而非某种逻辑来排序的。
 
-===== 重载：永不分离
+===== 重载：永不分割
 
 当一个类有多个构造函数，或是多个同名方法，这些函数/方法应该按顺序出现在一起，中间不要放进其它函数/方法。
 
 == 格式
-
-术语说明：块状结构(__block-like construct__)指的是一个类，方法或构造函数的主体。
-需要注意的是，数组初始化中的初始值可被选择性地视为<<block-like-construct, 块状结构>>。
 
 === 大括号
 
@@ -164,9 +157,9 @@ enum类有一些例外，见<<Enum-classes,枚举类>>。
 [source,java]
 void doNothing() {}
 
-=== 块缩进：2个空格
+=== 块缩进：4个空格
 
-每当开始一个新的块，缩进增加2个空格，当块结束时，缩进返回先前的缩进级别。
+每当开始一个新的块，缩进增加4个空格，当块结束时，缩进返回先前的缩进级别。
 缩进级别适用于代码和注释。(见<<KR-Style-example, 代码示例>>)
 
 === 一行一个语句
@@ -181,7 +174,7 @@ void doNothing() {}
 例外：
 
 . 不可能满足列限制的行(例如，Javadoc中的一个长URL，或是一个长的JSNI方法参考)。
-. `package`和`import`语句(见3.2节和3.3节)。
+. `package`和`import`语句。
 . 注释中那些可能被剪切并粘贴到shell中的命令行。
 
 === 自动换行
@@ -197,7 +190,6 @@ TIP: 提取方法或局部变量可以在不换行的情况下解决代码过长
 自动换行的基本准则是：更倾向于在**更高的语法级别**处断开。
 
 . 如果在__非赋值__运算符处断开，那么在该符号**前**断开(比如\+，它将位于下一行)。
-注意：这一点与Google其它语言的编程风格不同(如C++和JavaScript)。
 
 * 这条规则也适用于以下“类运算符”符号：点分隔符(`.`)，类型界限中的`&`（`<T extends Foo & Bar>`)，
 catch块中的管道符号(`catch (FooException | BarException e)`)
@@ -206,14 +198,12 @@ catch块中的管道符号(`catch (FooException | BarException e)`)
 . 方法名或构造函数名与左括号(`(`)留在同一行。
 . 逗号(`,`)与其前面的内容留在同一行。
 
-==== 自动换行时缩进至少+4个空格
+==== 自动换行时缩进至少+8个空格
 
-自动换行时，第一行后的每一行至少比第一行多缩进4个空格(注意：制表符不用于缩进。见2.3.1节)。
+自动换行时，第一行后的每一行至少比第一行多缩进8个空格。
 
-当存在连续自动换行时，缩进可能会多缩进不只4个空格(语法元素存在多级时)。
+当存在连续自动换行时，缩进可能会多缩进不只8个空格(语法元素存在多级时)。
 一般而言，两个连续行使用相同的缩进当且仅当它们开始于同级语法元素。
-
-第4.6.3水平对齐一节中指出，不鼓励使用可变数目的空格来对齐前面行的符号。
 
 === 空白
 
@@ -225,7 +215,7 @@ catch块中的管道符号(`catch (FooException | BarException e)`)
 * *例外*：两个连续字段之间的空行是可选的，用于字段的空行主要用来对字段进行逻辑分组。
 . 在函数体内，语句的逻辑分组间使用空行。
 . 类内的第一个成员前或最后一个成员后的空行是可选的(既不鼓励也不反对这样做，视个人喜好而定)。
-. 要满足本文档中其他节的空行要求(比如3.3节：import语句)
+. 要满足本文档中其他的空行要求。
 
 多个连续的空行是允许的，但没有必要这样做(我们也不鼓励这样做)。
 
@@ -249,30 +239,6 @@ catch块中的管道符号(`catch (FooException | BarException e)`)
 * `new int[] {5, 6}`和`new int[] { 5, 6 }`都是可以的。
 
 NOTE: 这个规则并不要求或禁止一行的开关或结尾需要额外的空格，只对内部空格做要求。
-
-==== 水平对齐：不做要求
-
-*术语说明*：水平对齐指的是通过增加可变数量的空格来使某一行的字符与上一行的相应字符对齐。
-
-这是允许的(而且在不少地方可以看到这样的代码)，但Google编程风格对此不做要求。
-即使对于已经使用水平对齐的代码，我们也不需要去保持这种风格。
-
-以下示例先展示未对齐的代码，然后是对齐的代码：
-
-[source,java]
-----
-private int x; // this is fine
-private Color color; // this too
-
-private int   x;      // permitted, but future edits
-private Color color;  // may leave it unaligned
-----
-
-TIP: 对齐可增加代码可读性，但它为日后的维护带来问题。
-考虑未来某个时候，我们需要修改一堆对齐的代码中的一行。
-这可能导致原本很漂亮的对齐代码变得错位。
-很可能它会提示你调整周围代码的空白来使这一堆代码重新水平对齐(比如程序员想保持这种水平对齐的风格)，
-这就会让你做许多的无用功，增加了reviewer的工作并且可能导致更多的合并冲突。
 
 === 用小括号来限定组：推荐
 
@@ -344,9 +310,9 @@ new int[]
 
 ===== 缩进
 
-与其它块状结构一致，switch块中的内容缩进为2个空格。
+与其它块状结构一致，switch块中的内容缩进为4个空格。
 
-每个switch标签后新起一行，再缩进2个空格，写下一条或多条语句。
+每个switch标签后新起一行，再缩进4个空格，写下一条或多条语句。
 
 ===== Fall-through：注释
 
@@ -376,7 +342,7 @@ switch (input) {
 ==== 注解(Annotations)
 
 注解紧跟在文档块后面，应用于类、方法和构造函数，一个注解独占一行。
-这些换行不属于自动换行(第4.5节，自动换行)，因此缩进级别不变。例如：
+这些换行不属于自动换行，因此缩进级别不变。例如：
 
 [source,java]
 ----
@@ -453,6 +419,27 @@ public protected private abstract static final transient volatile synchronized n
 
 测试类的命名以它要测试的类的名称开始，以`Test`结束。例如，`HashTest`或`HashIntegrationTest`。
 
+类名往往用不同的后缀/前缀表达额外的意思。
+如下表：
+
+|===
+|后缀名 | 意义 | 举例
+|Service | 表明这个类是个服务类，里面包含了给其他类提同业务服务的方法 | PaymentOrderService
+|Impl | 这个类是一个实现类，而不是接口 | PaymentOrderServiceImpl
+|Dao | 这个类封装了数据访问方法 | PaymentOrderDao
+|Controller | 直接处理页面请求，管理页面逻辑了类 | LoginController
+|Listener/Observer | 响应某种事件的类 | PaymentSuccessListener
+|Event | 这个类代表了某种事件 | PaymentSuccessEvent
+|Servlet | 一个Servlet | PaymentCallbackServlet
+|Factory | 生成某种对象工厂的类 | PaymentOrderFactory
+|Adapter | 用来连接某种以前不被支持的对象的类 | DatabaseLogAdapter
+|Job | 某种按时间运行的任务 | PaymentOrderCancelJob
+|Wrapper | 这是一个包装类，为了给某个类提供没有的能力 | SelectableOrderListWrapper
+|PO | 这是一个POJO | MenuStatePO
+|VO | 这是一个value object | FamilyMemberVO
+|===
+
+
 ==== 方法名
 
 方法名都以lowerCamelCase风格编写。
@@ -462,6 +449,39 @@ public protected private abstract static final transient volatile synchronized n
 下划线可能出现在JUnit测试方法名称中用以分隔名称的逻辑组件。
 一个典型的模式是：`test<MethodUnderTest>_<state>``，例如`testPop_emptyStack`。
 并不存在唯一正确的方式来命名测试方法。
+
+动词前缀往往表达特定的含义。
+如下表：
+
+|===
+|前缀名 | 意义 | 举例
+|create | 创建 | createOrder()
+|delete | 删除 | deleteOrder()
+|add | 创建，暗示新创建的对象属于某个集合 | addPaidOrder()
+|remove | 删除 | removeOrder()
+|init 或 initialize | 初始化，暗示会做些诸如获取资源等特殊动作 | initializeObjectPool
+|destroy | 销毁，暗示会做些诸如释放资源的特殊动作 | destroyObjectPool
+|open | 打开 | openConnection()
+|close | 关闭 | closeConnection()
+|read | 读取 | readUserName()
+|write | 写入 | writeUserName()
+|get | 获得（一般直接可以获得需要的数据，常用与获得bean的属性值） | getName()
+|set | 设置 | setName()
+|prepare | 准备 | prepareOrderList()
+|copy | 复制 | copyCustomerList()
+|calculate | 数值计算 | calculateCommission()
+|do | 执行某个过程或流程 | doOrderCancelJob()
+|dispatch | 判断程序流程转向 | dispatchUserRequest()
+|start | 开始 | startOrderProcessing()
+|stop | 结束 | stopOrderProcessing()
+|send | 发送某个消息或事件 | sendOrderPaidMessage()
+|receive | 接受消息或时间 | receiveOrderPaidMessgae()
+|respond | 响应用户动作 | responseOrderListItemClicked()
+|find | 查找对象(通过一系列的条件比对而找到需要的数据) | findNewSupplier()
+|update | 更新对象 | updateCommission()
+|===
+
+find方法在业务层尽量表达业务含义，比如 findInvalidMedicalCard()，查询无效的就诊卡，而不要findMedicalCardByStatus()。 数据访问层，find,update等方法可以表达要执行的sql，比如 findPatientByStatusAndHospital(ValidFalg.Enable, 10006)
 
 ==== 常量名
 
@@ -516,7 +536,7 @@ static final String[] nonEmptyArray = {"these", "can", "change"};
 类型变量可用以下两种风格之一进行命名：
 
 * 单个的大写字母，后面可以跟一个数字(如：`E`, `T`, `X`, `T2`)。
-* 以类命名方式(5.2.2节)，后面加个大写的T(如：`RequestT`, `FooBarT`)。
+* 以类命名方式，后面加个大写的T(如：`RequestT`, `FooBarT`)。
 
 === 驼峰式命名法(CamelCase)
 
@@ -544,9 +564,7 @@ Google指定了以下的转换方案。
 |"new customer ID"         |newCustomerId         |newCustomerID
 |"inner stopwatch"         |innerStopwatch        |innerStopWatch
 |"supports IPv6 on iOS?"   |supportsIpv6OnIos     |supportsIPv6OnIOS
-|"YouTube importer"        |YouTubeImporter
-YoutubeImporter*
-|
+|"YouTube importer"        |YouTubeImporter YoutubeImporter*|
 |===
 
 加星号处表示可以，但不推荐。
@@ -675,12 +693,3 @@ TIP: 如果有一些相关信息是需要读者了解的，那么以上的例外
 对于包外不可见的类和方法，如有需要，也是要使用Javadoc的。
 如果一个注释是用来定义一个类，方法，字段的整体目的或行为，那么这个注释应该写成Javadoc，这样更统一更友好。
 
-== 后记
-
-本文档翻译自Google Java Style， 译者@Hawstein。整理自：william-zheng
-
-在译文的基础上又重新对格式进行了调整，保持了Google原文的一些语法高亮。同时增加了一些译文中漏掉的语句。
-
-Goole原文：http://google-styleguide.googlecode.com/svn/trunk/javaguide.html
-
-译文原文：http://www.hawstein.com/posts/google-java-style.html
