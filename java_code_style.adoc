@@ -157,9 +157,9 @@ enum类有一些例外，见<<Enum-classes,枚举类>>。
 [source,java]
 void doNothing() {}
 
-=== 块缩进：4个空格
+=== 块缩进：2个空格
 
-每当开始一个新的块，缩进增加4个空格，当块结束时，缩进返回先前的缩进级别。
+每当开始一个新的块，缩进增加2个空格，当块结束时，缩进返回先前的缩进级别。
 缩进级别适用于代码和注释。(见<<KR-Style-example, 代码示例>>)
 
 === 一行一个语句
@@ -240,6 +240,38 @@ catch块中的管道符号(`catch (FooException | BarException e)`)
 
 NOTE: 这个规则并不要求或禁止一行的开关或结尾需要额外的空格，只对内部空格做要求。
 
+==== 空行的使用
+
+空行可以表达代码在语义上的分割，注释的作用范围，等等。将类似操作，或一组操作放在一起不用空行隔开，而用空行隔开不同组的代码， 如：
+
+[source,java]
+----
+Class.forName("org.postgresql.Driver");
+
+conn = DriverManager.getConnection(url, "username", "passwd");
+
+Statement st = conn.createStatement();
+ResultSet rs = st.executeQuery("SELECT * FROM you_table");
+int col_count=st.getResultSet().getMetaData().getColumnCount();
+
+while (rs.next()) {
+    for(int row=1; row<=col_count; row++){
+        System.out.print(rs.getString(row));
+        System.out.print("  ");
+    }
+    System.out.println();
+}
+
+rs.close();
+st.close();
+conn.close();
+----
+
+* 连续两行的空行代表更大的语义分割。
+* 方法之间用空行分割
+* 域之间用空行分割
+* 超过十行的代码如果还不用空行分割，就会增加阅读困难
+
 === 用小括号来限定组：推荐
 
 除非作者和reviewer都认为去掉小括号也不会使代码被误解，或是去掉小括号能让代码更易于阅读，
@@ -310,9 +342,9 @@ new int[]
 
 ===== 缩进
 
-与其它块状结构一致，switch块中的内容缩进为4个空格。
+与其它块状结构一致，switch块中的内容缩进为2个空格。
 
-每个switch标签后新起一行，再缩进4个空格，写下一条或多条语句。
+每个switch标签后新起一行，再缩进2个空格，写下一条或多条语句。
 
 ===== Fall-through：注释
 
@@ -365,22 +397,92 @@ public String getNameIfPresent() { ... }
 
 ==== 注释
 
+* 注释宜少而精，不宜多而滥，更不能误导。
+* 命名达意，结构清晰， 类和方法等责任明确，往往不需要，或者只需要很少注释，就可以让人读懂；相反，代码混乱，再多的注释都不能弥补。所以，应当先在代码本身下功夫。
+* 不能正确表达代码意义的注释，只会损害代码的可读性。
+* 过于详细的注释，对显而易见的代码添加的注释，罗嗦的注释，还不如不写。
+* 注释要和代码同步，过时的注释会成为开发的负担
+* 注释不是用来管理代码版本的，如果有代码不要了，直接删除，版本库会有记录的，不要注释掉，否则以后没人知道那段注释掉的代码该不该删除。
+
+===== 行内注释
+
+行内注释用 // 写在行尾
+
 ===== 块注释风格
 
-块注释与其周围的代码在同一缩进级别。它们可以是`/{asterisk} ... {asterisk}/`风格，也可以是`// ...`风格。
-对于多行的`/{asterisk} ... {asterisk}/`注释，后续行必须从`{asterisk}`开始， 并且与前一行的`{asterisk}`对齐。以下示例注释都是OK的。
+* 块级别注释，单行时用 //, 多行时用 /* .. */。
+* 较短的代码块用空行表示注释作用域。
+* 注释不要封闭在由星号或其它字符绘制的框架里。
+* 较长的代码块要用
+
+[source,java]
+/*------ start: ------*/
+
+和
+
+[source,java]
+/*-------- end: -------*/
+
+包围 如：
 
 [source,java]
 ----
-/*
- * This is          // And so           /* Or you can
- * okay.            // is this.          * even do this. */
- */
+
+/*----------start: 订单处理 ------- */
+//取得dao
+OrderDao dao = Factory.getDao("OrderDao");
+/* 查询订单 */
+Order order = dao.findById(456);
+//更新订单
+order.setUserName("uu");
+order.setPassword("pass");
+order.setPrice("ddd");
+orderDao.save(order);
+/*----------end: 订单处理 ------- */
+
 ----
 
-注释不要封闭在由星号或其它字符绘制的框架里。
 
 TIP: 在写多行注释时，如果你希望在必要时能重新换行(即注释像段落风格一样)，那么使用`/{asterisk} ... {asterisk}/`。
+
+===== Javadoc
+
+====== Javadoc标记
+
+标准的Javadoc标记按以下顺序出现：`@param`, `@return`, `@throws`, `@deprecated`,
+前面这4种标记如果出现，描述都不能为空。 当描述无法在一行中容纳，连续行需要至少再缩进2个空格。
+
+====== 摘要片段
+
+每个类或成员的Javadoc以一个简短的摘要片段开始。这个片段是非常重要的，在某些情况下，它是唯一出现的文本，比如在类和方法索引中。
+
+这只是一个小片段，可以是一个名词短语或动词短语，但不是一个完整的句子。
+它不会以`A {@code Foo} is a...`或`This method returns...`开头, 它也不会是一个完整的祈使句，
+如`Save the record...`。然而，由于开头大写及被加了标点，它看起来就像是个完整的句子。
+
+TIP: 一个常见的错误是把简单的Javadoc写成 `/{asterisk}{asterisk} @return the customer ID {asterisk}/`，这是不正确的。它应该写成`/{asterisk}{asterisk} Returns the customer ID. {asterisk}/`。
+
+====== 哪里需要使用Javadoc
+
+至少在每个`public`类及它的每个`public`和`protected`成员处使用Javadoc，下面有一些例外：
+
+====== 例外：不言自明的方法
+
+对于简单明显的方法如`getFoo`，Javadoc是可选的(即，是可以不写的)。这种情况下除了写“Returns the foo”，确实也没有什么值得写了。
+
+单元测试类中的测试方法可能是不言自明的最常见例子了，我们通常可以从这些方法的描述性命名中知道它是干什么的，因此不需要额外的文档说明。
+
+TIP: 如果有一些相关信息是需要读者了解的，那么以上的例外不应作为忽视这些信息的理由。
+例如，对于方法名`getCanonicalName`， 就不应该忽视文档说明，因为读者很可能不知道词语canonical name指的是什么。
+
+====== 例外：重载
+
+如果一个方法重载了超类中的方法，那么Javadoc并非必需的。
+
+====== 可选的Javadoc
+
+对于包外不可见的类和方法，如有需要，也是要使用Javadoc的。
+如果一个注释是用来定义一个类，方法，字段的整体目的或行为，那么这个注释应该写成Javadoc，这样更统一更友好。
 
 ==== Modifiers
 
@@ -399,7 +501,25 @@ public protected private abstract static final transient volatile synchronized n
 
 标识符只能使用ASCII字母和数字，因此每个有效的标识符名称都能匹配正则表达式`\w+`。
 
-在我们其它编程语言风格中使用的特殊前缀或后缀，如`name_`, `mName`, `s_name`和`kName`，在Java编程风格中都不再使用。
+在其它编程语言风格中使用的特殊前缀或后缀，如`name_`, `mName`, `s_name`和`kName`，在Java编程风格中都不再使用。
+
+标识符的命名力求做到统一、达意和简洁。
+
+==== 统一
+
+统一是指，对于同一个概念，在程序中用同一种表示方法，比如对于供应商，既可以用supplier，也可以用provider，但是我们只能选定一个使 用，至少在一个Java项目中保持统一。统一是作为重要的，如果对同一概念有不同的表示方法，会使代码混乱难以理解。即使不能取得好的名称，但是只要统 一，阅读起来也不会太困难，因为阅读者只要理解一次。
+
+==== 达意
+
+达意是指，标识符能准确的表达出它所代表的意义，比如： newSupplier, OrderPaymentGatewayService等；而 supplier1, service2，idtts等则不是好的命名方式。准确有两成含义，一是正确，而是丰富。如果给一个代表供应商的变量起名是 order，显然没有正确表达。同样的，supplier1, 远没有targetSupplier意义丰富。
+
+==== 简洁
+
+简洁是指，在统一和达意的前提下，用尽量少的标识符。如果不能达意，宁愿不要简洁。比 如：theOrderNameOfTheTargetSupplierWhichIsTransfered 太长， transferedTargetSupplierOrderName则较好，但是transTgtSplOrdNm就不好了。省略元音的缩写方式不要使 用，我们的英语往往还没有好到看得懂奇怪的缩写。
+
+==== 英文 vs 拼音
+
+尽量使用通俗易懂的英文单词，如果不会可以向队友求助，实在不行则使用汉语拼音，**绝对禁止**拼音与英文混用。
 
 === 标识符类型的规则
 
@@ -627,69 +747,124 @@ somethingThatYieldsAFoo().aStaticMethod(); // very bad
 
 TIP: 不要使用finalize。如果你非要使用它，请先仔细阅读和理解Effective Java 第7条款：“Avoid Finalizers”，然后不要使用它。
 
-== Javadoc
+=== 使用log而不是System.out.println
 
-=== 格式
+log可以设定级别，可以控制输出到哪里，容易区分是在代码的什么地方打印的，而System.out.print则不行。而 且，System.out.print的速度很慢。所以，除非是有意的，否则，都要用log。至少在提交到版本库之前把System.out.print 换成log。
 
-==== 一般形式
+=== 善用TODO:
 
-Javadoc块的基本格式如下所示：
+在代码中加入 //TODO: ，大部分的ide都会帮你提示，让你知道你还有什么事没有做。比如：
 
 [source,java]
 ----
-/**
- * Multiple lines of Javadoc text are written here,
- * wrapped normally...
- */
-public int method(String p1) { ... }
+if (order.isPaid()) {
+    //TODO: 更新订单
+}
 ----
 
-或者是以下单行形式：
+=== 不要对boolean值做true false判断
+
+比如：
 
 [source,java]
-/** An especially short bit of Javadoc. */
+----
+if (order.isPaid() == true) {
+    // Do something here
+}
+----
 
-基本格式总是OK的。当整个Javadoc块能容纳于一行时(且没有Javadoc标记@XXX)，可以使用单行形式。
+不如写成：
 
-==== 段落
+[source,java]
+----
+if (order.isPaid()) {
+    //Do something here
+}
+----
 
-空行(即，只包含最左侧星号的行)会出现在段落之间和Javadoc标记(@XXX)之前(如果有的话)。
-除了第一个段落，每个段落第一个单词前都有标签`<p>`，并且它和第一个单词间没有空格。
+=== 减少代码嵌套层次
 
-==== Javadoc标记
+代码嵌套层次达3层以上时，一般人理解起来都会困难。
 
-标准的Javadoc标记按以下顺序出现：`@param`, `@return`, `@throws`, `@deprecated`,
-前面这4种标记如果出现，描述都不能为空。 当描述无法在一行中容纳，连续行需要至少再缩进4个空格。
+=== 缩小变量的作用域
 
-=== 摘要片段
+能用局部变量的，不要使用实例变量，能用实例变量的，不要使用类变量。变量的生存期越短，以为着它被误用的机会越小，同一时刻程序员要关注的变量的状态越少。实例变量和类变量默认都不是线程安全的，局部变量是线程安全的。比如如下代码：
 
-每个类或成员的Javadoc以一个简短的摘要片段开始。这个片段是非常重要的，在某些情况下，它是唯一出现的文本，比如在类和方法索引中。
+[source,java]
+----
+public class OrderPayAction{
+    private Order order;
+    public void doAction() {
+        order = orderDao.findOrder();
+        doJob1();
+        doJob2();
+    }
+    private void doJob1() {
+        doSomething(order);
+    }
+    private void doJob2() {
+        doOtherThing(order);
+    }
+}
+----
 
-这只是一个小片段，可以是一个名词短语或动词短语，但不是一个完整的句子。
-它不会以`A {@code Foo} is a...`或`This method returns...`开头, 它也不会是一个完整的祈使句，
-如`Save the record...`。然而，由于开头大写及被加了标点，它看起来就像是个完整的句子。
+上例中order只不过担当了在方法间传递参数之用，用下面的方法更好：
 
-TIP: 一个常见的错误是把简单的Javadoc写成 `/{asterisk}{asterisk} @return the customer ID {asterisk}/`，这是不正确的。它应该写成`/{asterisk}{asterisk} Returns the customer ID. {asterisk}/`。
+[source,java]
+----
+public class OrderPayAction{
+    public void doAction() {
+        order = orderDao.findOrder();
+        doJob1(order);
+        doJob2(order);
+    }
+    private void doJob1(Order order) {
+        doSomething(order);
+    }
+    private void doJob2(Order order) {
+        doOtherThing(order);
+    }
+}
+----
 
-=== 哪里需要使用Javadoc
+=== 尽量不要用参数来带回方法运算结果
 
-至少在每个`public`类及它的每个`public`和`protected`成员处使用Javadoc，下面有一些例外：
+比如：
 
-==== 例外：不言自明的方法
+[source,java]
+----
+public void calculate(Order order) {
+    int result = 0;
+    //do lots of computing and store it in the result
+    order.setResult(result);
+}
+public void action() {
+    order = orderDao.findOrder();
+    calculate(order);
+    // do lots of things about order
+}
+----
 
-对于简单明显的方法如`getFoo`，Javadoc是可选的(即，是可以不写的)。这种情况下除了写“Returns the foo”，确实也没有什么值得写了。
+例子中calculate方法通过传入的order对象来存储结果， 不如如下写：
 
-单元测试类中的测试方法可能是不言自明的最常见例子了，我们通常可以从这些方法的描述性命名中知道它是干什么的，因此不需要额外的文档说明。
+[source,java]
+----
+public int calculate(Order order) {
+    int result = 0;
+    //do lots of computing and store it in the result
+    return result;
+}
+public void action() {
+    order = orderDao.findOrder();
+    order.setResult(calculate(order));
+    // do lots of things about order
+}
+----
 
-TIP: 如果有一些相关信息是需要读者了解的，那么以上的例外不应作为忽视这些信息的理由。
-例如，对于方法名`getCanonicalName`， 就不应该忽视文档说明，因为读者很可能不知道词语canonical name指的是什么。
+=== 重写toString()方法
 
-==== 例外：重载
+如果有可能，尽可能的重写toString方法，增加可读性。
 
-如果一个方法重载了超类中的方法，那么Javadoc并非必需的。
+=== public class中，使用accessor method而非public field
 
-==== 可选的Javadoc
-
-对于包外不可见的类和方法，如有需要，也是要使用Javadoc的。
-如果一个注释是用来定义一个类，方法，字段的整体目的或行为，那么这个注释应该写成Javadoc，这样更统一更友好。
-
+后者外部可以直接访问，失去了安全性。
